@@ -11,6 +11,8 @@ try:
     import pyperclip
     from Revshells.revshell import RevShell
     from NetworkHacking.mac_changer import change_mac
+    from NetworkHacking.port_scanner import PortScan
+    import threading
     import subprocess
 except:
     print("Failed To Import Some Dependencies Exitting.")
@@ -23,15 +25,19 @@ def check_sudo():
         ret = subprocess.check_call("sudo -v -p '%s'" % msg, shell=True)    
     return ret
 
+def PortScanner(ip, port):
+    if PortScan(ip, port):
+        print(colored(f'\'{port}\' is open', 'green'))
+
 # Tools
 class Tools:
     @staticmethod
-    def backdoor(LHOST, LPORT, RHOST, RPORT, srcp="."):
+    def backdoor(LHOST, LPORT, srcp="."):
         code = []
         with open("Backdoor/backdoor.py", "r") as f:
             code = f.readlines()
-            code[0] = f'ip = \'{RHOST}\'\n'
-            code[1] = f'port = {RPORT}\n'
+            code[0] = f'ip = \'{LHOST}\'\n'
+            code[1] = f'port = {LPORT}\n'
         
         try:
             os.mkdir("tmp")
@@ -68,6 +74,16 @@ class Tools:
     def MacChange(new_mac, interface):
         change_mac(new_mac, interface)
 
+    @staticmethod
+    def ScanPorts(ip, p_range):
+        lower, upper = p_range.split(" ")
+        r = int(lower)
+        x = int(lower)
+        for _ in range(r, int(upper) + 1):
+            t = threading.Thread(target=PortScanner, args=(ip, x))
+            t.start()
+            x += 1
+
 # Prints Logo
 def PrintLogo():
     with open("Logo.txt", "r") as f:
@@ -82,7 +98,7 @@ def GetOptions():
         "0": "backdoor",
         "1": "mac-changer",
         "2": "data-encryptor",
-        "3": 'port-scanners',
+        "3": 'port-scanner',
         "4": "rev-shell-one"
     }
     i = 0
@@ -91,20 +107,26 @@ def GetOptions():
         i += 1
     
     selected = input(colored(f"{os.getcwd()}", "blue") + "$ ")
-    
-    return options_with_idx[selected]
+    try:
+        return options_with_idx[selected]
+    except:
+        if selected[:3] == 'cd ':
+            os.chdir(selected[3:])
+        if selected == 'quit':
+            print(colored('[😼] Your friendly neighborhood hackerman signing out ladies!', 'magenta'))
+            exit()
+        os.system(selected)
 
 # Handles Selected Option 
 def HandleOptions(selected: str):
     if selected == "backdoor":
         LHOST = input(colored("LHOST > ", "magenta"))
         LPORT = int(input(colored("LPORT > ", "magenta")))
-        RHOST = input(colored("RHOST > ", "magenta"))
         DESTINATION = input(colored("Enter Destination To Save The Backdoor Default is \".\" > ", "magenta"))
         if DESTINATION == "":
-            Tools.backdoor(LHOST, LPORT, RHOST, LPORT)
+            Tools.backdoor(LHOST, LPORT, LPORT)
         else:
-            Tools.backdoor(LHOST, LPORT, RHOST, LPORT, srcp=DESTINATION)
+            Tools.backdoor(LHOST, LPORT, srcp=DESTINATION)
     if selected == 'rev-shell-one':
         languages_available = ['Perl', "Ruby", "Python", "Bash", "Netcat", "PHP"]
         i = 0
@@ -125,9 +147,14 @@ def HandleOptions(selected: str):
             new_mac = input(colored("New Mac-Address > ", "magenta"))
             interface = input(colored("Which Interface > ", "magenta"))
             Tools.MacChange(new_mac, interface)
+        
+    if selected == 'port-scanner':
+        IP_ADDR = input(colored('IP Address Of The Target > '))
+        RANGE = input(colored('Rnage Of Ports To Scan(lower upper) > '))
+        Tools.ScanPorts(IP_ADDR, RANGE)
 
-# Runs If The File Is Ran By `python3 Frontend.py`
 if __name__ == '__main__':
     PrintLogo()
-    selected = GetOptions()
-    HandleOptions(selected)
+    while True:
+        selected = GetOptions()
+        HandleOptions(selected)
