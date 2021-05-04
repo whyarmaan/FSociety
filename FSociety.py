@@ -13,10 +13,11 @@ try:
     from NetworkHacking.mac_changer import change_mac
     from NetworkHacking.port_scanner import PortScan
     import threading
+    import readline
     import subprocess
 except:
     print("Failed To Import Some Dependencies Exitting.")
-    exit()
+    exit(1)
 
 def check_sudo():
     ret = 0
@@ -115,6 +116,7 @@ def GetOptions():
         if selected == 'quit':
             print(colored('[😼] Your friendly neighborhood hackerman signing out ladies!', 'magenta'))
             exit()
+        print(colored(f"[!!] Executing {selected} as a system command", "magenta"))
         os.system(selected)
 
 # Handles Selected Option 
@@ -153,8 +155,25 @@ def HandleOptions(selected: str):
         RANGE = input(colored('Rnage Of Ports To Scan(lower upper) > '))
         Tools.ScanPorts(IP_ADDR, RANGE)
 
+def EnableAutoCompletion(text, state):
+    text = text.split(" ")[-1]
+    a = []
+    for root, folders, files in os.walk("."):
+        for folder in folders:
+            if folder.startswith(text):
+                a.append(folder)
+        
+        for file in files:
+            if file.startswith(text):
+                a.append(file)
+    
+    return a[state]
+
 if __name__ == '__main__':
     PrintLogo()
+    readline.set_completer(EnableAutoCompletion)
+    readline.parse_and_bind("tab: complete")
+
     while True:
         selected = GetOptions()
         HandleOptions(selected)
