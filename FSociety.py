@@ -11,7 +11,7 @@ try:
     import pyperclip
     from Revshells.revshell import RevShell
     from NetworkHacking.mac_changer import change_mac
-    from NetworkHacking.port_scanner import PortScan
+    from NetworkHacking.port_scanner import PortScan, GetBanner
     import threading
     import readline
     import subprocess
@@ -28,7 +28,8 @@ def check_sudo():
 
 def PortScanner(ip, port):
     if PortScan(ip, port):
-        print(colored(f'\'{port}\' is open', 'green'))
+        banner = GetBanner(ip, port)
+        print(colored(f'\'{port}\' is open Banner: "{banner}"', 'green'))
 
 # Tools
 class Tools:
@@ -158,15 +159,15 @@ def HandleOptions(selected: str):
 def EnableAutoCompletion(text, state):
     text = text.split(" ")[-1]
     a = []
-    for root, folders, files in os.walk("."):
+    for _, folders, files in os.walk("."):
         for folder in folders:
             if folder.startswith(text):
-                a.append(folder)
+                a.append(folder + "/")
         
         for file in files:
             if file.startswith(text):
                 a.append(file)
-    
+
     return a[state]
 
 if __name__ == '__main__':

@@ -70,6 +70,6 @@ class Listener:
                 print(self.recieve())
 
 if __name__ == '__main__':
-    listener = Listener("localhost", 5555)
+    listener = Listener("localhost", 4040)
     listener.accept_connection()
     listener.shell()

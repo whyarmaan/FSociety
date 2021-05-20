@@ -1,10 +1,11 @@
 import readline
 import os
+import socket
 
 def completer(text: str, state):
     text = text.split(" ")[-1]
     a = []
-    for root, folders, files in os.walk("."):
+    for _, folders, files in os.walk("."):
         for folder in folders:
             if folder.startswith(text):
                 a.append(folder)
@@ -17,4 +18,12 @@ def completer(text: str, state):
 
 readline.set_completer(completer)
 readline.parse_and_bind("tab: complete")
-input("Give Input: ")
+
+def banner_grab():
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(('127.0.0.1', 21))
+    s.send(b'GET HTTP/1.1 \r\n')
+    ret = s.recv(1024).decode().rstrip()
+    print(ret)
+
+banner_grab()
