@@ -1,5 +1,6 @@
 # 🔬 F-Society!
-## F-Society inspired by a tv show "Mr. Robot" i am making a simple tool which will help CTF players and hackers in their well CTF and hacks haha surprise ugh why tf am i so unfunny 🤯
+## F-Society inspired by a tv show "Mr. Robot" i am making a simple tool which will help CTF players and hackers in their, well CTF and hacks haha surprise!
+ugh why tf am i so unfunny 🤯
 #
 How to run? Well you gotta have python installed
 ```bash
