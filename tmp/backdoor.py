@@ -1,5 +1,5 @@
 ip = 'localhost'
-port = 4040
+port = 6666
 import socket, json
 import subprocess, os
 import base64, pyautogui
