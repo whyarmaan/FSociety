@@ -6,6 +6,10 @@ How to run? Well you gotta have python installed
 ```bash
 python3 FSociety.py
 ```
+You might face some dependency error while running to fix that just do
+```bash
+pip3 install <dependency name>
+```
 FSociety currently have 5 working features like
 #
 1. Backdoors - FSociety can generate pyc files which will help hackers to gain a reverse shell access we are still working to make the pyc file compile into a working executable! 🔨 Features of This backdoor it can get screenshot of the target pc can execute commands can upload stuffs and can download stuffs too! 
